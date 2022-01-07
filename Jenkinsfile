@@ -1,27 +1,29 @@
 pipeline {
-      agent any
-      stages {
-            stage('Init') {
-                  steps {
-                        timeout(time: 3, unit: 'MINUTES') {
-                        echo 'Hi, Welcome to Pipeline'
-                        }
-                  }
+    agent any
+    stages {
+        stage('Build Application') {
+            steps {
+                sh echo "hello from build"
             }
-            stage('Build') {
-                  steps {
-                        echo 'Building Sample Maven Project'
-                  }
+            post {
+                success {
+                    echo "Now Archiving the Artifacts...."
+                   }
             }
-            stage('Test') {
-                  steps {
-                        echo "Testing being conducted"
-                  }
+        }
+        stage('Deploy in Staging Environment'){
+            steps{
+                build job: 'my-dsl-test-project'
+             }
+            
+        }
+        stage('Deploy to Production'){
+            steps{
+                timeout(time:5, unit:'DAYS'){
+                    input message:'Approve PRODUCTION Deployment?'
+                }
+                build job: 'my-dsl-job-1'
             }
-            stage('Deploy Production') {
-                  steps {
-                        echo "Deploying in Production Area"
-                  }
-            }
-      }
+        }
+    }
 }
