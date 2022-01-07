@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Build Application') {
             steps {
-                sh echo "hello from build"
+                echo "hello from build"
             }
             post {
                 success {
