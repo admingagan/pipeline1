@@ -1,29 +1,28 @@
 pipeline {
     agent any
     stages {
-        stage('Build Application') {
+        stage('Test') {
             steps {
-                echo "hello from build"
-            }
-            post {
-                success {
-                    echo "Now Archiving the Artifacts...."
-                   }
+                sh 'echo "Fail!"; exit 1'
             }
         }
-        stage('Deploy in Staging Environment'){
-            steps{
-                build job: 'my-dsl-test-project'
-             }
-            
+    }
+    post {
+        always {
+            echo 'This will always run'
         }
-        stage('Deploy to Production'){
-            steps{
-                timeout(time:5, unit:'DAYS'){
-                    input message:'Approve PRODUCTION Deployment?'
-                }
-                build job: 'my-dsl-job-1'
-            }
+        success {
+            echo 'This will run only if successful'
+        }
+        failure {
+            echo 'This will run only if failed'
+        }
+        unstable {
+            echo 'This will run only if the run was marked as unstable'
+        }
+        changed {
+            echo 'This will run only if the state of the Pipeline has changed'
+            echo 'For example, if the Pipeline was previously failing but is now successful'
         }
     }
 }
