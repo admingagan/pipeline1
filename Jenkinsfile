@@ -8,22 +8,19 @@ pipeline {
             }
             stage('Build') {
                   steps {
-                        echo 'Building Sample Maven Project'
-                  }
-                  steps {
                   build job: 'my-dsl-job-1'
                   }
             }
             stage('Test') {
-                  steps {
-                        echo "Testing being conducted"
-                  }
                   steps {
                   build job: 'my-dsl-job-2'
                   }
             }
             stage('Deploy Production') {
                   steps {
+                    timeout(time:5, unit:'DAYS'){
+                    input message:'Approve PRODUCTION Deployment?'
+                    }
                         echo "Deploying in Production Area"
                   }
             }
