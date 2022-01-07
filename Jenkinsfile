@@ -3,8 +3,10 @@ pipeline {
       stages {
             stage('Init') {
                   steps {
+                        timeout(time: 3, unit: 'MINUTES') {
                         echo 'Hi, Welcome to Pipeline'
                         }
+                  }
             }
             stage('Build') {
                   steps {
