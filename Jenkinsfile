@@ -1,28 +1,47 @@
 pipeline {
-      agent any
-      stages {
-            stage('Init') {
-                  steps {
-                        echo 'Hi, Welcome to Pipeline'
-                        }
+    agent none
+    stages {
+        stage('Non-Sequential Stage') {
+            agent {
+                label 'for-non-sequential'
             }
-            stage('Build') {
-                  steps {
-                  build job: 'my-dsl-job-1'
-                  }
+            steps {
+                echo "On Non-Sequential Stage"
             }
-            stage('Test') {
-                  steps {
-                  build job: 'my-dsl-job-2'
-                  }
+        }
+        stage('Sequential') {
+            agent {
+                label 'for-sequential'
             }
-            stage('Deploy Production') {
-                  steps {
-                    timeout(time:5, unit:'DAYS'){
-                    input message:'Approve PRODUCTION Deployment?'
+            environment {
+                FOR_SEQUENTIAL = "some-value"
+            }
+            stages {
+                stage('In Sequential 1') {
+                    steps {
+                        echo "In Sequential 1"
                     }
-                        echo "Deploying in Production Area"
-                  }
+                }
+                stage('In Sequential 2') {
+                    steps {
+                        echo "In Sequential 2"
+                    }
+                }
+                stage('Parallel In Sequential') {
+                    parallel {
+                        stage('In Parallel 1') {
+                            steps {
+                                echo "In Parallel 1"
+                            }
+                        }
+                        stage('In Parallel 2') {
+                            steps {
+                                echo "In Parallel 2"
+                            }
+                        }
+                    }
+                }
             }
-      }
+        }
+    }
 }
