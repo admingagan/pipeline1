@@ -1,28 +1,46 @@
+
 pipeline {
-    agent any
+    agent none
     stages {
-        stage('Test') {
+        stage('Non-Sequential Stage') {
             steps {
-                sh 'echo "Fail!" '
+                echo "On Non-Sequential Stage"
             }
         }
-    }
-    post {
-        always {
-            echo 'This will always run'
-        }
-        success {
-            echo 'This will run only if successful'
-        }
-        failure {
-            echo 'This will run only if failed'
-        }
-        unstable {
-            echo 'This will run only if the run was marked as unstable'
-        }
-        changed {
-            echo 'This will run only if the state of the Pipeline has changed'
-            echo 'For example, if the Pipeline was previously failing but is now successful'
+        stage('Sequential') {
+            environment {
+                FOR_SEQUENTIAL = "some-value"
+            }
+            stages {
+                stage('In Sequential 1') {
+                    steps {
+                        echo "In Sequential 1"
+                        sleep 10
+                    }
+                }
+                stage('In Sequential 2') {
+                    steps {
+                        echo "In Sequential 2"
+                        sleep 10
+                    }
+                }
+                stage('Parallel In Sequential') {
+                    parallel {
+                        stage('In Parallel 1') {
+                            steps {
+                                echo "In Parallel 1"
+                                sleep 10
+                            }
+                        }
+                        stage('In Parallel 2') {
+                            steps {
+                                echo "In Parallel 2"
+                                sleep 10
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
